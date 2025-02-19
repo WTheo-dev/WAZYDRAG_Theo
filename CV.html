@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio - WAZYDRAG Théo</title>
+
+  <!-- Tailwind CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+  />
+
+  <style>
+    /* Défilement doux */
+    html {
+      scroll-behavior: smooth;
+    }
+    /* Dégradé de bleu foncé vers bleu clair */
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom right, #0f172a, #3b82f6);
+      min-height: 100vh;
+      color: #ffffff;
+      font-family: sans-serif;
+    }
+
+    /* Barre de navigation centrée */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(15, 23, 42, 0.9);
+    }
+    nav ul {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    nav a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.4s ease, color 0.4s ease;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.25rem;
+    }
+    nav a:hover {
+      background: linear-gradient(90deg, #1e3a8a, #3b82f6);
+      color: #ffffff;
+    }
+
+    /* Titres de section à gauche + trait sur toute la page */
+    .section-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 2rem;
+      max-width: 70rem;
+      margin: 0 auto 2rem auto; /* Centrer horizontalement, marges */
+      padding: 0 1rem;
+    }
+    .section-header h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 0;
+      margin-right: 1rem;
+    }
+    .section-header hr {
+      flex: 1;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.3);
+      border: none;
+    }
+
+    section {
+      width: 100%;
+      padding: 4rem 1rem;
+      box-sizing: border-box;
+    }
+
+    /* Hero plein écran */
+    #home {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .hero-title {
+      font-size: 4.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Apparition progressive */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* À propos */
+    .about-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      max-width: 60rem;
+      margin: 0 auto;
+    }
+    @media(min-width: 768px) {
+      .about-container {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+    }
+
+    /* Expériences : cartes plus grandes */
+    .exp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+      max-width: 70rem;
+      margin: 2rem auto 0 auto;
+      padding: 0 1rem;
+    }
+    .exp-card {
+      background: #ffffff; /* fond blanc */
+      color: #000000;      /* texte noir */
+      padding: 2rem;       /* agrandi */
+      border-radius: 0.75rem;
+      position: relative;
+    }
+    .exp-logo {
+      display: block;
+      margin: 0 auto 1rem auto;
+      max-height: 70px;
+    }
+    .exp-lieu {
+      font-size: 0.9rem;
+      color: #555555;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Carrousel Projets : 2 slides, 3 projets each */
+    .carousel-container {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .carousel-track {
+      display: flex;
+      transition: transform 0.4s ease;
+      will-change: transform;
+      width: 200%; /* 2 slides => 200% */
+    }
+    .slide {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .project-card {
+      background: rgba(255,255,255, 0.1);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      min-height: 240px;
+      position: relative;
+      overflow: hidden;
+      flex: 0 0 calc(33.33% - 1rem); /* 3 projets par slide */
+    }
+
+    /* Flèches plus écartées (-5rem) */
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: #ffffff;
+      font-size: 2rem;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      z-index: 5;
+    }
+    .carousel-btn:hover {
+      background: rgba(255,255,255,0.4);
+    }
+    #projPrev {
+      left: -5rem;
+    }
+    #projNext {
+      right: -5rem;
+    }
+
+    /* Contact centré */
+    .contact-container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+     /* Agrandissement et passage en rectangle de la photo */
+     .about-container img {
+      width: 600px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 0.75rem;
+      border: 4px solid #3b82f6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <nav>
+      <ul>
+        <li><a href="#home">Accueil</a></li>
+        <li><a href="#about">À propos</a></li>
+        <li><a href="#formations">Formations</a></li>
+        <li><a href="#experiences">Expériences</a></li>
+        <li><a href="#competences">Compétences</a></li>
+        <li><a href="#projets">Projets</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- SECTION HOME -->
+  <section id="home" class="fade-in">
+    <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+      <h1 class="hero-title">Bienvenue sur mon Portfolio</h1>
+      <p class="text-lg md:text-xl mb-6">
+        Je suis <span class="text-blue-200 font-bold">WAZYDRAG Théo</span>, étudiant en Informatique
+      </p>
+      <button
+        onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})"
+        class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-500 transition"
+      >
+        Découvrir
+      </button>
+    </div>
+  </section>
+
+  <!-- A PROPOS -->
+  <section id="about" class="fade-in">
+    <div class="section-header">
+      <h2>À propos</h2>
+      <hr/>
+    </div>
+    <div class="about-container">
+      <div>
+        <img
+          src="theo.jpg"
+          alt="Photo de Vous"
+          class="w-56 h-56 object-cover rounded-full border-4 border-blue-400"
+        />
+      </div>
+      <div>
+        <h3 class="text-2xl font-bold mb-2">WAZYDRAG Théo</h3>
+        <p class="mb-4">
+            Actuellement en 3<sup>e</sup> année de BUT Informatique, je suis spécialisé en
+            déploiement d’applications communicantes et sécurisées. Passionné par la
+            conception de sites ergonomiques et la mise en place d’infrastructures fiables,
+            je vous invite à découvrir mon parcours.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a
+            href="cv.pdf"
+            download
+            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-400 transition flex items-center"
+          >
+           Mon CV
+          </a>
+          <a
+            href="#contact"
+            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition"
+          >
+            Contact
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORMATIONS (ligne & points centrés) -->
+  <section id="formations" class="fade-in">
+    <div class="section-header px-4 max-w-6xl mx-auto">
+      <h2>Formations</h2>
+      <hr/>
+    </div>
+    <div class="timeline-center px-4">
+      <!-- Formation 1 -->
+      <div class="timeline-item text-center">
+        <div class="flex justify-center mb-2">
+          <img
+            src="victorhugo.png"
+            alt="Logo Lycée Victor Hugo"
+            class="h-16 w-auto"
+          />
+        </div>
+        <h3 class="text-xl font-bold text-blue-200">Lycée Victor Hugo (2020)</h3>
+        <p class="text-sm mb-2">
+          Baccalauréat Scientifique (Spécialité SIN, etc.)
+        </p>
+      </div>
+      <!-- Formation 2 -->
+      <div class="timeline-item text-center mt-6">
+        <div class="flex justify-center mb-2">
+          <img
+            src="logo_iut.png"
+            alt="Logo IUT Paul Sabatier"
+            class="h-16 w-auto"
+          />
+        </div>
+        <h3 class="text-xl font-bold text-blue-200">IUT Paul Sabatier - DUT (2021-2023)</h3>
+        <p class="text-sm mb-2">
+          Bases du développement, systèmes informatiques
+        </p>
+      </div>
+      <!-- Formation 3 -->
+      <div class="timeline-item text-center mt-6">
+        <div class="flex justify-center mb-2">
+          <img
+            src="logo_iut.png"
+            alt="Logo IUT Paul Sabatier"
+            class="h-16 w-auto"
+          />
+        </div>
+        <h3 class="text-xl font-bold text-blue-200">IUT Paul Sabatier - BUT (2023-...)</h3>
+        <p class="text-sm mb-2">
+          Spécialisation déploiement d’applications communicantes
+        </p>
+      </div>
+    </div>
+  </section>
+
+ <!-- EXPERIENCES -->
+<section id="experiences" class="fade-in">
+  <div class="section-header px-4 max-w-6xl mx-auto">
+    <h2>Expériences</h2>
+    <hr/>
+  </div>
+  <div class="exp-grid max-w-6xl mx-auto px-4">
+    <!-- Stage Vitesco -->
+    <div class="exp-card">
+      <a href="https://www.vitesco-technologies.com/" target="_blank">
+        <img src="vitesco.png" alt="Logo Vitesco" class="exp-logo"/>
+      </a>
+      <!-- Ajout de la date (2023) -->
+      <p class="text-sm text-center font-bold mb-2">
+        Stage - Vitesco Technologies <span class="text-gray-500">(2023)</span>
+      </p>
+      <div class="exp-lieu">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17.657 16.657L13.414 12m0 0l4.243-4.243M13.414 12H3"/>
+        </svg>
+        <span>40 Av. du Général de Croutte, 31100 Toulouse</span>
+      </div>
+      <hr class="my-2 border-gray-300"/>
+      <p class="text-sm">
+        Réalisation d’une application pour la gestion du routage de la téléphonie.
+      </p>
+    </div>
+
+    <!-- Stage La Banque Postale -->
+    <div class="exp-card">
+      <a href="https://www.labanquepostale.fr/" target="_blank">
+        <img src="banquepostale.png" alt="Logo La Banque Postale" class="exp-logo"/>
+      </a>
+      <!-- Ajout de la date (2024) -->
+      <p class="text-sm text-center font-bold mb-2">
+        Stage - La Banque Postale <span class="text-gray-500">(2024)</span>
+      </p>
+      <div class="exp-lieu">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17.657 16.657L13.414 12m0 0l4.243-4.243M13.414 12H3"/>
+        </svg>
+        <span>7 Rue Jean Palaprat</span>
+      </div>
+      <hr class="my-2 border-gray-300"/>
+      <p class="text-sm">
+        Audits sécurité-sûreté et création d’un SharePoint.
+      </p>
+    </div>
+
+    <!-- Alternance La Banque Postale -->
+    <div class="exp-card">
+      <a href="https://www.labanquepostale.fr/" target="_blank">
+        <img src="banquepostale.png" alt="Logo La Banque Postale" class="exp-logo"/>
+      </a>
+      <!-- Ajout de la date (2024) -->
+      <p class="text-sm text-center font-bold mb-2">
+        Alternance - La Banque Postale <span class="text-gray-500">(2024)</span>
+      </p>
+      <div class="exp-lieu">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17.657 16.657L13.414 12m0 0l4.243-4.243M13.414 12H3"/>
+        </svg>
+        <span>7 rue Jean Palaprat, Toulouse</span>
+      </div>
+      <hr class="my-2 border-gray-300"/>
+      <p class="text-sm">
+        Missions en sécurité-sûreté dans le cadre de l’alternance.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+ <!-- COMPETENCES -->
+<section id="competences" class="fade-in">
+  <div class="section-header">
+    <h2>Compétences</h2>
+    <hr/>
+  </div>
+  <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-4">
+    <div class="bg-red-700 text-white p-6 rounded border border-black">
+      <h3 class="text-xl font-semibold mb-2">Développement Multi-plateformes</h3>
+      <p>Adaptation d'applications pour divers supports (embarqué, web, mobile, IoT).</p>
+    </div>
+    <div class="bg-yellow-500 text-black p-6 rounded border border-black">
+      <h3 class="text-xl font-semibold mb-2">Maintenance et Évolution des Systèmes</h3>
+      <p>Gestion et optimisation de systèmes informatiques communicants en environnement opérationnel.</p>
+    </div>
+    <div class="bg-black text-white p-6 rounded border border-black">
+      <h3 class="text-xl font-semibold mb-2">Management d'Équipe Informatique</h3>
+      <p>Encadrement et coordination d'une équipe technique.</p>
+    </div>
+    <div class="bg-green-400 text-black p-6 rounded border border-black">
+      <h3 class="text-xl font-semibold mb-2">Optimisation et Sécurisation des Bases de Données</h3>
+      <p>Gestion, interaction avec des applications et mise en œuvre de la sécurité des données.</p>
+    </div>
+    <div class="bg-orange-400 text-black p-6 rounded border border-black">
+      <h3 class="text-xl font-semibold mb-2">Choix des Algorithmes Adaptés</h3>
+      <p>Sélection et implémentation d'algorithmes en fonction des problématiques spécifiques.</p>
+    </div>
+    <div class="bg-blue-400 text-black p-6 rounded border border-black">
+      <h3 class="text-xl font-semibold mb-2">Gestion de Projet IT</h3>
+      <p>Application de méthodologies de suivi de projet en accord avec les besoins métiers et utilisateurs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROJETS -->
+<section id="projets" class="fade-in">
+  <div class="section-header">
+    <h2>Projets</h2>
+    <hr/>
+  </div>
+
+  <div class="carousel-container mt-6">
+    <div id="projCarousel" class="carousel-track">
+      <!-- Slide 1 -->
+      <div class="slide">
+        <div class="project-card">
+          <span
+            class="absolute text-5xl font-extrabold text-blue-200 opacity-10"
+            style="top: 10px; right: 15px;"
+          >
+            6
+          </span>
+          <img
+            src="sae.png"
+            alt="Projet Trisomie 21"
+            class="w-full mb-4 rounded"
+          />
+          <h3 class="text-lg font-bold mb-2">Application Trisomie 21</h3>
+          <p class="text-sm mb-4">
+            Une application d’économie de jetons pour l’association “Trisomie 21”.
+          </p>
+          <a
+            href="https://github.com/WTheo-dev/SAE_Reseaux"
+            class="inline-block bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-400"
+          >
+            Vers le projet →
+          </a>
+        </div>
+        <div class="project-card">
+          <span
+            class="absolute text-5xl font-extrabold text-blue-200 opacity-10"
+            style="top: 10px; right: 15px;"
+          >
+            7
+          </span>
+          <img
+            src="infrastructure_informatique.png"
+            alt="Projet Infrastructure Réseau"
+            class="w-full mb-4 rounded"
+          />
+          <h3 class="text-lg font-bold mb-2">Infrastructure réseau</h3>
+          <p class="text-sm mb-4">
+            Mise en place de routeurs, VLANs, Docker, etc.
+          </p>
+          <a
+            href="#"
+            class="inline-block bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-400"
+          >
+            Vers le projet →
+          </a>
+        </div>
+        <div class="project-card">
+          <span
+            class="absolute text-5xl font-extrabold text-blue-200 opacity-10"
+            style="top: 10px; right: 15px;"
+          >
+            8
+          </span>
+          <h3 class="text-lg font-bold mb-2">Codes d'erreur</h3>
+          <p class="text-sm mb-4">
+            Algorithme permettant de vérifier le nombre d'erreurs sur un mot de code.
+          </p>
+          <a
+            href="#"
+            class="inline-block bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-400"
+          >
+            Vers le projet →
+          </a>
+        </div>
+      </div>
+      <!-- Slide 2 -->
+      <div class="slide">
+        <div class="project-card">
+          <span
+            class="absolute text-5xl font-extrabold text-blue-200 opacity-10"
+            style="top: 10px; right: 15px;"
+          >
+            9
+          </span>
+          <img
+            src="projet-exemple1.png"
+            alt="Projet Exemple 1"
+            class="w-full mb-4 rounded"
+          />
+          <h3 class="text-lg font-bold mb-2">Projet Exemple 1</h3>
+          <p class="text-sm mb-4">
+            Description du projet 1...
+          </p>
+          <a
+            href="#"
+            class="inline-block bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-400"
+          >
+            Vers le projet →
+          </a>
+        </div>
+        <div class="project-card">
+          <span
+            class="absolute text-5xl font-extrabold text-blue-200 opacity-10"
+            style="top: 10px; right: 15px;"
+          >
+            10
+          </span>
+          <img
+            src="projet-exemple2.png"
+            alt="Projet Exemple 2"
+            class="w-full mb-4 rounded"
+          />
+          <h3 class="text-lg font-bold mb-2">Projet Exemple 2</h3>
+          <p class="text-sm mb-4">
+            Description du projet 2...
+          </p>
+          <a
+            href="#"
+            class="inline-block bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-400"
+          >
+            Vers le projet →
+          </a>
+        </div>
+        <!-- Nouveau projet : Proxy FTP -->
+        <div class="project-card">
+          <span
+            class="absolute text-5xl font-extrabold text-blue-200 opacity-10"
+            style="top: 10px; right: 15px;"
+          >
+            12
+          </span>
+          <img
+            src="proxy-ftp.png"
+            alt="Proxy FTP"
+            class="w-full mb-4 rounded"
+          />
+          <h3 class="text-lg font-bold mb-2">Proxy FTP</h3>
+          <p class="text-sm mb-4">
+            Mise en place d’un proxy FTP pour gérer et sécuriser les transferts de fichiers.
+          </p>
+          <a
+            href="#"
+            class="inline-block bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-400"
+          >
+            Vers le projet →
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Flèches transparentes plus écartées -->
+    <button id="projPrev" class="carousel-btn" style="left:0; background:rgba(255,255,255,0.1)">❮</button>
+    <button id="projNext" class="carousel-btn" style="right:0; background:rgba(255,255,255,0.1)">❯</button>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="fade-in">
+  <div class="section-header">
+    <h2>Contact</h2>
+    <hr/>
+  </div>
+  <div class="contact-container">
+    <form class="contact-form max-w-md">
+      <label class="block w-full">
+        <span class="block mb-1 font-semibold">Nom</span>
+        <input
+          type="text"
+          class="w-full border border-gray-300 p-2 rounded text-gray-900"
+          placeholder="Votre nom"
+        />
+      </label>
+      <label class="block w-full">
+        <span class="block mb-1 font-semibold">Email</span>
+        <input
+          type="email"
+          class="w-full border border-gray-300 p-2 rounded text-gray-900"
+          placeholder="Votre email"
+        />
+      </label>
+      <label class="block w-full">
+        <span class="block mb-1 font-semibold">Message</span>
+        <textarea
+          class="w-full border border-gray-300 p-2 rounded text-gray-900"
+          rows="5"
+          placeholder="Votre message..."
+        ></textarea>
+      </label>
+      <button
+        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 mt-2"
+      >
+        Envoyer
+      </button>
+    </form>
+    <div class="max-w-md mt-6 text-blue-200">
+      <a href="https://github.com/WTheo-Dev" class="mr-4 hover:text-blue-100">GitHub</a> |
+      <a href="https://www.linkedin.com/in/wazydrag-théo" class="ml-4 hover:text-blue-100"
+        >LinkedIn</a
+      >
+    </div>
+  </div>
+</section>
+
+
+  <!-- JS : Apparition progressive + Carrousel Projets -->
+  <script>
+    // ---------------------------
+    // Apparition progressive
+    // ---------------------------
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    fadeEls.forEach((el) => {
+      observer.observe(el);
+    });
+
+    // ---------------------------
+    // Carrousel Projets
+    // ---------------------------
+    let projIndex = 0; // On a 2 slides => 0 ou 1
+    const projCarousel = document.getElementById('projCarousel');
+    const projPrev = document.getElementById('projPrev');
+    const projNext = document.getElementById('projNext');
+    const totalSlides = 2; // 2 slides (3 projets par slide)
+
+    function updateCarousel() {
+      projCarousel.style.transform = `translateX(-${projIndex * 100}%)`;
+    }
+
+    projPrev.addEventListener('click', () => {
+      projIndex = (projIndex - 1 + totalSlides) % totalSlides;
+      updateCarousel();
+    });
+    projNext.addEventListener('click', () => {
+      projIndex = (projIndex + 1) % totalSlides;
+      updateCarousel();
+    });
+  </script>
+</body>
+</html>
